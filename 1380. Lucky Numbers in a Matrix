@@ -1,0 +1,38 @@
+class Solution {
+public:
+    vector<int> luckyNumbers (vector<vector<int>>& matrix) {
+        
+        int m=matrix.size();
+        int n=matrix[0].size();
+        vector<int>rowmin(m);
+        vector<int>colmax(n,INT_MIN);
+        //step 1: har row ka minimum element nikalo
+        for(int i=0;i<m;i++){
+            int min=matrix[i][0];
+            for(int j=0;j<n;j++){
+                if(matrix[i][j]<min){
+                    min=matrix[i][j];
+                }
+            }
+            rowmin[i]=min;
+        }
+        //step 2: har column ka maximum element nikalo
+        for(int j=0;j<n;j++){
+            for(int i=0;i<m;i++){
+                if(matrix[i][j]>colmax[j]){
+                    colmax[j]=matrix[i][j];
+                }
+            }
+        }
+        //step 3: firse traverse karenge matrix ko aur dekhenge kya wo element uske corresponding rowmin ya colmax mein hai,if yes then its a lucky number
+        vector<int>lucky;
+        for(int i=0;i<m;i++){
+            for(int j=0;j<n;j++){
+                if(matrix[i][j]==rowmin[i] and matrix[i][j]==colmax[j]){
+                    lucky.push_back(matrix[i][j]);
+                }
+            }
+        }
+        return lucky;
+    }
+};
