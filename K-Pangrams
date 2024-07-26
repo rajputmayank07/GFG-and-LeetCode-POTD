@@ -1,0 +1,15 @@
+bool kPangram(string str, int k) {
+        // code here
+        unordered_set<char>set;
+        int ch=0;
+        for(char c: str ){
+            if(isalpha(c)){
+                set.insert(c-'a');
+            }
+            if(c!=' ') ch++;
+        }
+        int howmany= 26-set.size();
+        if(ch<26)return false;
+        else return howmany<=k;
+    }
+};
