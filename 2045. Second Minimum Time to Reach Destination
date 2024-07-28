@@ -1,0 +1,55 @@
+class Solution {
+public:
+    struct State {
+    int node;
+    long long time;
+    bool operator>(const State& other) const {
+        return time > other.time;
+    }
+};
+
+long long calculateWaitTime(long long currentTime, int change) {
+    int cycle = change * 2;
+    if ((currentTime / change) % 2 == 1) { // If currently in the red signal
+        return currentTime + (cycle - (currentTime % cycle));
+    }
+    return currentTime;
+}
+
+int secondMinimum(int n, vector<vector<int>>& edges, int time, int change) {
+    vector<vector<int>> adj(n + 1);
+    for (const auto& edge : edges) {
+        adj[edge[0]].push_back(edge[1]);
+        adj[edge[1]].push_back(edge[0]);
+    }
+
+    priority_queue<State, vector<State>, greater<State>> pq;
+    vector<vector<long long>> dist(n + 1, vector<long long>(2, LLONG_MAX));
+
+    pq.push({1, 0});
+    dist[1][0] = 0;
+
+    while (!pq.empty()) {
+        State state = pq.top();
+        pq.pop();
+
+        int node = state.node;
+        long long currentTime = state.time;
+
+        for (int neighbor : adj[node]) {
+            long long nextTime = calculateWaitTime(currentTime, change) + time;
+
+            if (nextTime < dist[neighbor][0]) {
+                dist[neighbor][1] = dist[neighbor][0];
+                dist[neighbor][0] = nextTime;
+                pq.push({neighbor, nextTime});
+            } else if (nextTime > dist[neighbor][0] && nextTime < dist[neighbor][1]) {
+                dist[neighbor][1] = nextTime;
+                pq.push({neighbor, nextTime});
+            }
+        }
+    }
+
+    return dist[n][1] == LLONG_MAX ? -1 : dist[n][1];
+}
+};
