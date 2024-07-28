@@ -1,0 +1,44 @@
+const long long INF =LLONG_MAX;
+class Solution {
+public:
+    long long minimumCost(string source, string target, vector<char>& original, vector<char>& changed, vector<int>& cost) {
+        
+        if(source.size()!=target.size()) return -1;
+        //step 1: cost matrix ko declare and initialize kiya
+        vector<vector<long long>>costmatrix(26,vector<long long >(26,INF)); 
+        //step2: kisi char ko usi char mein convert karne ka cost =0
+        for(int i=0;i<26;i++){
+            costmatrix[i][i]=0;
+        }
+        //step 3 agar u se v mein direct convert hone ka cost diya hai toh 
+        int n=original.size();
+        for(int i=0;i<n;i++){
+            int u= original[i]-'a';
+            int v=changed[i]-'a';
+            costmatrix[u][v]= min(costmatrix[u][v],(long long)cost[i]);
+        }
+        //step 4 ab minimum cost dhoondega using floyd warshall algorithm
+        for(int i=0;i<26;i++){
+            for(int j=0;j<26;j++){
+                for(int k=0;k<26;k++){
+                    if(costmatrix[j][i]!=INF and costmatrix[i][k]!=INF){
+                        costmatrix[j][k]= min(costmatrix[j][k],costmatrix[j][i]+costmatrix[i][k]);
+                    }
+                }
+            }
+        }
+        //step 5 ab total cost pata lagayenge source ko target mein convert karne ki
+        long long totalcost=0;
+        int m=source.size();
+        for(int i=0;i<m;i++){
+            int sourcechar=source[i]-'a';
+            int targetchar=target[i]-'a';
+            if(costmatrix[sourcechar][targetchar]==INF){
+                return -1;
+            }
+            totalcost+=costmatrix[sourcechar][targetchar];
+        }
+        return totalcost;
+        
+    }
+};
